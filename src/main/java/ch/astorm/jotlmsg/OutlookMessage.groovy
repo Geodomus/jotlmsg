@@ -189,7 +189,7 @@ public class OutlookMessage {
      */
     public List<OutlookMessageRecipient> getAllRecipients() {
         List<OutlookMessageRecipient> allRecipients = new ArrayList<>(16);
-        recipients.forEach((k,v) -> allRecipients.addAll(v));
+        recipients.each{k, v -> allRecipients.addAll(v)};
         return allRecipients;
     }
     
@@ -454,7 +454,7 @@ public class OutlookMessage {
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.STORE_SUPPORT_MASK, FLAG_READABLE | FLAG_WRITEABLE, ByteBuffer.allocate(4).putInt(0x00040000).array())); //all the strings will be in unicode
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.MESSAGE_CLASS, FLAG_READABLE | FLAG_WRITEABLE, StringUtil.getToUnicodeLE("IPM.Note"))); //outlook message
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.MESSAGE_FLAGS, FLAG_READABLE | FLAG_WRITEABLE, ByteBuffer.allocate(4).putInt(8).array())); //unsent message
-        topLevelChunk.setProperty(new PropertyValue(MAPIProperty.HASATTACH, FLAG_READABLE | FLAG_WRITEABLE, attachments.isEmpty() ? new byte[]{0} : new byte[]{1}));
+        topLevelChunk.setProperty(new PropertyValue(MAPIProperty.HASATTACH, FLAG_READABLE | FLAG_WRITEABLE, attachments.isEmpty() ? ByteBuffer.allocate(1).put(new Byte("0")).array() : ByteBuffer.allocate(1).put(new Byte("1")).array()));
         if(subject!=null) { topLevelChunk.setProperty(new PropertyValue(MAPIProperty.SUBJECT, FLAG_READABLE | FLAG_WRITEABLE, StringUtil.getToUnicodeLE(subject))); }
         if(body!=null) { topLevelChunk.setProperty(new PropertyValue(MAPIProperty.BODY, FLAG_READABLE | FLAG_WRITEABLE, StringUtil.getToUnicodeLE(body))); }
         if(from!=null) { 
@@ -537,12 +537,12 @@ public class OutlookMessage {
     }
     
     private void parseMAPIMessage(MAPIMessage mapiMessage) {
-        silent(()-> parseFrom(mapiMessage));
-        silent(()-> parseReplyTo(mapiMessage));
-        silent(()-> parseSubject(mapiMessage));
-        silent(()-> parseTextBody(mapiMessage));
-        silent(()-> parseRecipients(mapiMessage));
-        silent(()-> parseAttachments(mapiMessage));
+        silent("parseFrom", mapiMessage);
+        silent("parseReplyTo", mapiMessage);
+        silent("parseSubject", mapiMessage);
+        silent("parseTextBody", mapiMessage);
+        silent("parseRecipients", mapiMessage);
+        silent("parseAttachments", mapiMessage);
     }
     
     /**
@@ -645,8 +645,9 @@ public class OutlookMessage {
         }
     }
     
-    private boolean silent(SilentCallFailure call) {
-        try { call.invoke(); }
+    private boolean silent(String call, MAPIMessage message) {
+        
+		try { this."$call"(message)}
         catch(ChunkNotFoundException ignored) { return false; }
         return true;
     }

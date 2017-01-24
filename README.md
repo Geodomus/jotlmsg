@@ -1,19 +1,10 @@
 # jotlmsg
 It's a simple API meant to easily generate Microsoft Outlook message files (.msg). 
-This library is based on [Apache POI](https://poi.apache.org) and is a 100% Java implementation.
+This library is based on [Apache POI](https://poi.apache.org) and is currenly a work in progress groovy impementation of [ctabin's jotlmsg](https://github.com/ctabin/jotlmsg)
 
 ## Installation
 
-Simply add the ```jotlmsg.jar``` and its dependencies to your classpath.
-
-If you're using maven, then simply add the following dependency:
-```xml
-<dependency>
-    <groupId>ch.astorm</groupId>
-    <artifactId>jotlmsg</artifactId>
-    <version>1.0</version>
-</dependency>
-```
+Since this isn't production ready yet (still failing unit tests) i do not encourage ANYBODY to use this. This is, currently, a personal project i'm working on, and thus, not ready.
 
 ## Usage examples
 
